@@ -1,0 +1,104 @@
+body {
+  background-color: #f7f7f8;
+}
+/* reset marginesow oraz dopelnien */
+html, body, ul, li { margin: 0; padding: 0;}
+
+html, body {height: 100%}
+
+/* reset wysokosci linii i fontu */
+h1, h2, h3, ul, li, p, div { margin: 0; padding: 0; font-size: 14px; line-height: 17px; color: #000000; font-family: Lato, sans-serif;}
+
+/* resetowanie ramek obrazkołw */
+img {border: 0;}
+
+a{
+   text-decoration: none;
+  }
+
+a:visited{
+    color:black;
+    text-decoration: none;
+  }
+
+/*******container****************/
+#container{
+  background-color: #f7f7f8;
+  min-height: 100%;
+  width: 100%;
+  min-width: 900px;
+  left:0;
+  top: 0;
+}
+form, fieldset{
+  border: none;
+}
+
+/*******header********/
+#header p{
+  font-size: 30px;
+  line-height: 30px;
+  text-align: center;
+}
+
+.button{
+  background-color: #345483;
+  color: white;
+  width: 250px;
+  padding: 12px 12px;
+  border-radius: 6px;
+  text-align: center;
+  border: none;
+  color: white;
+  font-size: 20px;
+}
+a.button{
+  color: white;
+}
+/******index********/
+.blok{
+  width: 1000px;
+  margin: 100px auto;
+}
+
+#main{
+  text-align: center;
+  margin: 30px auto;
+  width: 1000px;
+}
+
+/********saveSuccess***********/
+.blok  #wylosowany{
+  color: #345483;
+  font-weight: bolder;
+  margin-top: 40px;
+  text-align: center;
+  font-size: 35px;
+}
+
+/********losowanie***********/
+.blok{
+  text-align: center;
+}
+.blok button{
+  padding: 10px 8px;
+  margin-top: 40px;
+}
+.losowanie-user {
+  margin-top: 60px;
+  text-align: center;
+  width: 1000px;
+}
+
+.losowanie-user label{
+  font-size: 25px;
+  margin-right: 10px;
+}
+.losowanie-user input{
+  font-size: 20px;
+  padding: 5px;
+  text-align: center;
+}
+.losowanie-user button{
+  margin-top: 20px;
+}

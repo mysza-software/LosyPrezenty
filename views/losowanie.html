@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+  	<title>@pageTitle@</title>
+    <meta http-equiv="Content-Type" content="text/html" charset="utf-8"/>
+  	<link  rel="stylesheet" href="/static?style.css" type="text/css">
+  	<link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+  </head>
+  <body>
+  	<div id = "container">
+      <form role="form" action="/saveSuccess" method="post" enctype="multipart/form-data">
+        <fieldset>
+          <div class="blok">
+        		<div id="header"><p>Wylosuj osobę ktorej kupisz prezent świąteczny!</p></div>
+            <button type="submit" class="button silnik-losujacy">Losuj :)</button>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="static?jsLosowanie.js"></script>
+  </body>
+</html>

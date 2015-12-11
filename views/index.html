@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pl">
+	<head>
+		<title>@pageTitle@</title>
+	  <meta http-equiv="Content-Type" content="text/html" charset="utf-8"/>
+		<link  rel="stylesheet" href="/static?style.css" type="text/css">
+		<link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+	</head>
+	<body>
+		<div id = "container">
+			<div class="blok">
+				<div id= "header"><p>Witaj na stronie startowej świątecznego losowania prezentów!</p></div>
+				<form role="form" action="/save" method="post" enctype="multipart/form-data">
+					<fieldset>
+						<div class="losowanie-user">
+							<label for="name">Wpisz swoje imię: </label>
+	          	<!--<input type="text" id="name" name="name" placeholder="Imię" />-->
+							<input list="name"  name="name">
+								<datalist id="name">
+									<option value="karol">
+									<option value="ewelina">
+									<option value="wiktoria">
+									<option value="agnieszka">
+									<option value="tomek">
+									<option value="monika">
+									<option value="piotrek">
+									<option value="janek">
+									<option value="renia">
+									<option value="tadeusz">
+									<option value="jadzia">
+									<option value="lidzia">
+									<option value="szymon">
+									<option value="asia">
+									<option value="ela">
+								</datalist>
+			      </div>
+						<div id="main">
+							<button type="submit" class="button zapiszImie">Przejdź do losowania</button>
+						</div>
+					</fieldset>
+				</form>
+			</div>
+		</div>
+	<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="static?js.js"></script>
+	</body>
+</html>
+
+
+<input list="name"  name="name">
+	<datalist id="name">
+		<option value="Internet Explorer">
+		<option value="Firefox">
+		<option value="Chrome">
+		<option value="Opera">
+		<option value="Safari">
+	</datalist>
