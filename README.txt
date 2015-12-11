@@ -1,0 +1,1 @@
+Program który napisa³am w celu nauki node.js oraz MySQL. 
