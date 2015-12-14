@@ -79,7 +79,8 @@ controllers['/save'] = function(request, response){ //strona zapisujaca imie los
 				//wyslanie do bazy ze osoba losowala
 				conn.query('UPDATE domownicy SET czy_losowal=true WHERE imie = ?', [pobraneImie]);
 
-		var	wylosowanaLiczba;
+
+
 		function losujaca(){
 			//pobieram z bazy danych nie wylosowane id
 				conn.query('SELECT id FROM domownicy WHERE id not in (SELECT kogo_wylosowal FROM domownicy WHERE kogo_wylosowal is not null)', function(err, result){
@@ -89,14 +90,15 @@ controllers['/save'] = function(request, response){ //strona zapisujaca imie los
 						console.log(err);
 						return;//zatrzymujemy działanie tej funckji
 					}
-
-						console.log('wartosc wylosowana' + result[0].id);
-						var liczba = result[0].id;
-						wylosowanaLiczba = 10;
+					var liczba = (result[Math.floor((Math.random())*result.length + 1)].id);
+					global.wylosowanaLiczba = 10;
+						console.log('wartosc wylosowana' + wylosowanaLiczba);
+						return wylosowanaLiczba;
 				});
 			}
 
 			losujaca();
+			var	wylosowanaLiczba;
 			console.log('wartosc wylosowanaaaaaaaaaa' + wylosowanaLiczba);
 
 
@@ -121,6 +123,7 @@ controllers['/save'] = function(request, response){ //strona zapisujaca imie los
 					});  //zamnkniecie selecta ktory pobiera id wylosowanej osoby
 
 			onSaveSuccessImie(response);
+
 
 			});		//zamkniecie selekta ktory pobiera cala tablice domownicy
 		});		//zamkniecie funkcji parsujacej dane  z formularza
@@ -148,6 +151,8 @@ controllers['/save'] = function(request, response){ //strona zapisujaca imie los
 		onSaveSuccessLosowanie(response);
 
 };
+
+
 
 controllers['/404'] = function(request, response){ //gdy strona nie zostala znaleziona
 	render.render(response, 'views/error404.html', {
