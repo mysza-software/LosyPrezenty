@@ -1,4 +1,4 @@
-var fs = require('fs');
+var fs = require('fs');	//czytanie plikow odszukiwanie poliku html, odczytywanie go w nodzie i wyrzucaniu uzytkownikowi do przegladarki
 
 //funkcja odpowiedzialna za wyrenderowanie/dopasowanie widoku
 var render = function(response, views,  params, httpCode){ //do funkcji render beda przekazywane: response bo render bedzie wstawil html do odpowiedzi,
@@ -13,13 +13,13 @@ var render = function(response, views,  params, httpCode){ //do funkcji render b
 			return;
 		}
 		//params
-		params = params||{}; //sprawdzam ze zmienna params jest obiektem zatem jezeli uzytkownik nie ustawi params to istawiamy pusty obiekt
+		params = params||{}; //sprawdzam czy zmienna params jest obiektem, jezeli uzytkownik nie ustawi params to ustawiamy pusty obiekt
 		for(var key in params){
 			data = data.replace(new RegExp('@'+key+'@', 'g'), params[key]); //to wrazenie reguralne znajdzie wszsytkie  //RegExp - wyrazenie regularne g - global
     }
-			//httpCode
+		//httpCode
 		httpCode = httpCode||200;
-			//response
+		//response
 		response.writeHead(httpCode, {'Content-type': 'text/html'});
 		response.write(data);
 		response.end();

@@ -5,22 +5,27 @@ var formidable = require('formidable');
 var qs = require('querystring');
 var util = require('util');
 var mysql = require('mysql');
-
+// render jest to modul ktora sama utworzylam
 var render = require('./render.js');
+
+//zmienna globalna ktora przechowuje imie wylosowanej osoby
+var	imieSzczesliwca;
 
 //pisze wlasny system routingu zeby przegladarka sama wygenerowala strony
 //bazujemy na tym co uzytkownik wpisze w przegladarke
-//za każdym razem bede sprawdzac url i na tej podstawie beda systemy zwracane
+//za każdym razem bede sprawdzac url i na tej podstawie beda zwracane systemy
 var controllers = {};
+
 //w controllers tworze klucz ktory bedzie odpowiadal na pathName
+//strona glowna
 controllers['/'] = function(request, response){
 	render.render(response, 'views/index.html',  {
 		pageTitle: 'Strona głowna'
 	});
 };
 
-controllers['/save'] = function(request, response){ //strona zapisujaca imie losujacego
-
+//strona zapisujaca imie losujacego
+controllers['/save'] = function(request, response){
 	//wyswietlanie szablonow dla odpowiednich sytuacji
 	var onSaveError = function(response){
 	  render.render(response, 'views/saveError.html', {
@@ -52,10 +57,7 @@ controllers['/save'] = function(request, response){ //strona zapisujaca imie los
 			}
 
 			//zapis informacji do bazy danych
-			//saveData bedzie posiadal informacje zapisywane do bazy danych
-			//pamietamy aby klucze pasowaly do tabeli
 			var pobraneImie = fields.name;
-			console.log(pobraneImie);
 
 			//stworzenie polaczenie do bazy danych
 			var conn = mysql.createConnection({ //przekazuje obiekt w ktorym beda parametry polaczenia
@@ -67,6 +69,7 @@ controllers['/save'] = function(request, response){ //strona zapisujaca imie los
 
 			//odwoluje sie do obiektu conn i metoda connect czyli polacz sie z baza danych
 			conn.connect();
+
 
 			conn.query("SELECT * FROM domownicy", function(err, result) {
 				if(err){
@@ -80,78 +83,66 @@ controllers['/save'] = function(request, response){ //strona zapisujaca imie los
 				conn.query('UPDATE domownicy SET czy_losowal=true WHERE imie = ?', [pobraneImie]);
 
 
-
 		function losujaca(){
-			//pobieram z bazy danych nie wylosowane id
-				conn.query('SELECT id FROM domownicy WHERE id not in (SELECT kogo_wylosowal FROM domownicy WHERE kogo_wylosowal is not null)', function(err, result){
+			//pobieram z bazy danych id osob ktore nie zostaly jeszcze wylosowane
+				conn.query('SELECT id FROM domownicy WHERE id not in (SELECT kogo_wylosowal FROM domownicy WHERE kogo_wylosowal <> 0)', function(err, result){
 					if(err){
 						//wyswietlamy komunikat o bledzie
 						onSaveError(response);
 						console.log(err);
 						return;//zatrzymujemy działanie tej funckji
 					}
-					var liczba = (result[Math.floor((Math.random())*result.length + 1)].id);
-					global.wylosowanaLiczba = 10;
-						console.log('wartosc wylosowana' + wylosowanaLiczba);
-						return wylosowanaLiczba;
-				});
-			}
+					//losuje liczbe porzadkowa
+					liczba = (result[Math.floor((Math.random())*result.length + 1)].id);
+
+					//wylosowana liczba nie moze byc id osoby losujacej
+						if(liczba != pobraneImie){
+							conn.query('UPDATE domownicy SET kogo_wylosowal=? WHERE imie=?',[liczba, pobraneImie]);
+						}
+				//pobieram z bazy danych dane osoby juz wylosowanej
+					conn.query('SELECT * FROM domownicy WHERE id = ?', [liczba], function (err, result){
+							if(err){
+									//wyswietlamy komunikat o bledzie
+									onSaveError(response);
+									console.log(err);
+									return;	//zatrzymujemy działanie tej funckji
+							}
+						for (var i = 0; i < result.length; i++) {
+							imieSzczesliwca = result[i].imie;
+							return imieSzczesliwca;
+						}	//zamykam petle
+					}); //zamkniecie zapytania o osobe wylosowana
+				}); //zmkniecie zaptania o osoby jeszcze nie wylosowane
+			} //zamkniecie funckji losuja
 
 			losujaca();
-			var	wylosowanaLiczba;
-			console.log('wartosc wylosowanaaaaaaaaaa' + wylosowanaLiczba);
-
-
-				//	var wylosowanaLiczba = Math.floor((Math.random())*15 + 1);
-					//pobieram imie o id rownym wylosowanej liczbie
-					conn.query('SELECT * FROM domownicy WHERE id = ?', [wylosowanaLiczba], function(err, result){
-						if(err){
-							//wyswietlamy komunikat o bledzie
-							onSaveError(response);
-							console.log(err);
-							return;//zatrzymujemy działanie tej funckji
-						}
-						//wylosowana liczba nie moze byc id osoby losujacej
-						for (var i = 0; i < result.length; i++) {
-							if(result[i].imie != pobraneImie){
-							  var imieWylosowane = result[i].imie;
-								global.imieZwyciescy = result[i].imie;
-							  conn.query('UPDATE domownicy SET kogo_wylosowal=? WHERE imie=?',[result[i].id, pobraneImie]);
-							}
-						}
-						conn.end();
-					});  //zamnkniecie selecta ktory pobiera id wylosowanej osoby
 
 			onSaveSuccessImie(response);
-
-
 			});		//zamkniecie selekta ktory pobiera cala tablice domownicy
 		});		//zamkniecie funkcji parsujacej dane  z formularza
 	} //zamkniecie if
 }; //zamkniecie controllers save
 
- controllers['/saveSuccess'] = function(request, response){//odpowiedz gdy wcisniemy przycisk losuj
+controllers['/saveSuccess'] = function(request, response){//odpowiedz gdy wcisniemy przycisk losuj
 
 	 //wyswietlanie szablonow dla odpowiednich sytuacji
  		var onSaveError = function(response){
-	 	  render.render(response, 'views/saveError.html', {
+ 	  		render.render(response, 'views/saveError.html', {
 	 	    pageTitle: 'Wystapil blad zapisu'
 	 	  });
-	 	};
-
-	//wyswietlanie szablonow dla odpowiednich sytuacji
-		var onSaveSuccessLosowanie = function(response){
-			render.render(response, 'views/saveSuccess.html', {
-				pageTitle: 'poprawnie zapisano',
-				imie: global.imieZwyciescy
-			});
 		};
 
-		//wywolanie
-		onSaveSuccessLosowanie(response);
+ 	//wyswietlanie szablonow dla odpowiednich sytuacji
+		var onSaveSuccessLosowanie = function(response){
+			render.render(response, 'views/saveSuccess.html', {
+			pageTitle: 'poprawnie zapisano',
+				imie: imieSzczesliwca,
+			});
+	};
 
-};
-
+	//wywolanie
+	onSaveSuccessLosowanie(response);
+ };
 
 
 controllers['/404'] = function(request, response){ //gdy strona nie zostala znaleziona
@@ -160,7 +151,7 @@ controllers['/404'] = function(request, response){ //gdy strona nie zostala znal
 	});
 };
 
-
+//kontroler ktory sluzy do implementowania plikow js i css
 controllers['/static'] = function(request, response){
 try {
 		plik = url.parse(request.url).query;
@@ -173,6 +164,7 @@ try {
 
 		//httpCode
 		httpCode = httpCode||200;
+
 		//response
 		if((plik.substring(plik.length-3))=='css') {
 			      response.writeHead(httpCode, {'Content-type': 'text/css'});
@@ -191,16 +183,16 @@ try {
 //w pierwszej kolejności tworze serwer http
 //odwoluje sie do obiektu http
 http.createServer(function(request, response){ //w obiekcie request mamy zapisany wszelkie informacje ktore wysyla przegladarka responie - sluzy do wygenerowanie odpowiedzi do przegladarki
-	console.log("drugi krok funkcja serwerowa działa");
 
-	var pathName = url.parse(request.url).pathname; //przeparsuje url w obiekcie request i dzieki pathname poda tylko pathname
+//przeparsuje url w obiekcie request i dzieki pathname poda tylko pathname
+	var pathName = url.parse(request.url).pathname;
 
 	//sprawdzam czy w obiekcie controllers jest cos takiego jak pathname
 	if(!controllers[pathName]){ //jezeli nie ma w controlerrsach czegos takiego jak pathName to zmieniamy na 404
 		pathName = '/404';
 	}
 
-//wywplujemy funkcje z parametrami i przekazujemy mu dalej
+	//wywplujemy funkcje z parametrami i przekazujemy mu dalej
 	controllers[pathName](request, response);
 
 }).listen(80, '127.0.0.1');
