@@ -40,6 +40,13 @@ controllers['/save'] = function(request, response){
 	  });
 	};
 
+	//wyswietlanie szablonow dla odpowiednich sytuacji
+	var onSaveErrorPonowneLosowanie = function(response){
+		render.render(response, 'views/ponowneLosowanie.html', {
+			pageTitle: 'Ponowne losowanie',
+		});
+	};
+
 	//formularz wysylany jest postem
 	if("POST" === request.method){
 
@@ -70,6 +77,23 @@ controllers['/save'] = function(request, response){
 			//odwoluje sie do obiektu conn i metoda connect czyli polacz sie z baza danych
 			conn.connect();
 
+			//pobieram imiona ktore juz losowaly i zablokowanie kolejnego losowania przez te sama osobe
+			conn.query("SELECT imie FROM domownicy WHERE czy_losowal = 1", function(err, result){
+				if(err){
+			    //wyswietlamy komunikat o bledzie
+			    onSaveError(response);
+			    console.log(err);
+			    return;		//zatrzymujemy działanie tej funckji
+			  }
+				for (var i = 0; i < result.length; i++){
+					console.log("pobranie imienia " + result[i].imie);
+					if(pobraneImie === result[i].imie){
+						onSaveErrorPonowneLosowanie(response);
+						console.log('jestem w ifie');
+			     	console.log('dupaaaa juz losowales');
+			  	}
+				}
+			});
 
 			conn.query("SELECT * FROM domownicy", function(err, result) {
 				if(err){
